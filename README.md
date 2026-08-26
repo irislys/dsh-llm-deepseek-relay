@@ -30,7 +30,6 @@ dsh plugin --profile web add ./dsh-llm-deepseek-relay-<ver>.tgz
 
 ```yaml
 relay:
-  routeMode: model-match          # always | model-match | off（可选，默认 model-match）
   providers:
     - provider: deepseek-a        # 供应商路由名 / 选择器分组名（别用 deepseek-official）
       baseURL: https://a.example/v1
@@ -53,7 +52,6 @@ relay:
 
 | 字段 | 说明 |
 |---|---|
-| `routeMode` | `model-match`(默认)：请求的模型命中某配置模型时路由到其供应商；`always`：总是路由到配置的第一个模型；`off`：仅注册路由，靠 Web 选择器选。 |
 | `provider` | 该供应商注册成的路由名（选择器分组名）。不能与 `deepseek-official` 冲突。 |
 | `baseURL` | 中转站根地址；适配器自动拼 `/chat/completions`。 |
 | `apiKey` / `apiKeyEnv` | **二选一**。`apiKey` 直接写 key（硬编码）；`apiKeyEnv` 写环境变量名（经 dsh 凭据服务或启动环境解析）。都填或都不填 → 加载失败。 |

@@ -16,8 +16,6 @@
 #   - key 二选一：apiKey(硬编码) 或 apiKeyEnv(环境变量名)，绝不能同时填
 # =============================================================================
 relay:
-  routeMode: model-match          # always | model-match | off（可选，默认 model-match）
-
   providers:
     # 例 1：供应商 A —— 用一个中转站服务两个官方模型
     - provider: deepseek-a        # 供应商路由名 / 选择器分组名（别用 deepseek-official）
