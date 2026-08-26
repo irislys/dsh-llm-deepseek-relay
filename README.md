@@ -13,16 +13,27 @@
 
 ## 安装
 
-```sh
-# 已发布为包时
-dsh plugin --profile web add dsh-llm-deepseek-relay
+> 插件目前**尚未发布到 npm**，用下面任一方式安装进 profile（二选一）。
 
-# 或本地 tarball
+### 方式 A：GitHub git 源（推荐）
+```sh
+dsh plugin --profile web add "github:irislys/dsh-deepseek-relay-config#main"
+```
+仓库根目录就是插件包（`package.json` 带 `dsh.bundle`），会直接拉取并装进 profile。
+
+### 方式 B：本地 tarball（已验证）
+```sh
+git clone https://github.com/irislys/dsh-deepseek-relay-config
+cd dsh-deepseek-relay-config
 pnpm pack
 dsh plugin --profile web add ./dsh-llm-deepseek-relay-<ver>.tgz
 ```
 
-安装后重启 `dsh --profile web`。
+装完会把它加入 `dsh.profile.bundles`，并把所依赖的 `@deepseek-ai/dsh-llm-deepseek` 等官方包一起装进 profile。
+
+> 兼容性：依赖按 `0.1.1-rc.2` 固定；需与运行的 dsh 版本一致（dsh `0.1.1-rc.x`）。若 dsh 版本不同，改 `package.json` 里对应依赖版本后重打 tarball。
+
+安装后重启 `dsh --profile web`，并在 `$DSH_HOME/deepseek-relay.config.yaml`（见下）填好你的中转站。
 
 ## 配置
 
