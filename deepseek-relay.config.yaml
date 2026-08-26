@@ -1,0 +1,47 @@
+# =============================================================================
+# deepseek-relay.config.yaml
+#
+# 这是 dsh-llm-deepseek-relay 插件的唯一配置源。
+# 只需管理「中转供应商 + 我们新增的功能」；官方 3 个模型已经硬编码好的参数
+# （contextWindow / maxTokens / reasoningEffort / thinking / 图片预算 / retry 等）
+# 全部由插件内置，**不需要**也**不要**在这里填。
+#
+# 放置：复制到 $DSH_HOME/deepseek-relay.config.yaml
+#       （$DSH_HOME 默认 ~/.dsh，Windows 为 C:\Users\<你>\.dsh）
+#
+# 规则：
+#   - 每个供应商 = 一个 provider 分组（选择器里显示为组名）
+#   - 一个供应商可服务 1~N 个官方模型；每个模型 = official(键值1) → relayId(键值2)
+#   - 全配置合计最多 3 个模型；每个官方模型只能出现一次（跨供应商也算）
+#   - key 二选一：apiKey(硬编码) 或 apiKeyEnv(环境变量名)，绝不能同时填
+# =============================================================================
+relay:
+  routeMode: model-match          # always | model-match | off（可选，默认 model-match）
+
+  providers:
+    # 例 1：供应商 A —— 用一个中转站服务两个官方模型
+    - provider: deepseek-a        # 供应商路由名 / 选择器分组名（别用 deepseek-official）
+      baseURL: https://a.example/v1
+      apiKey: sk-a-xxxxxxxx       # 硬编码 key（与 apiKeyEnv 二选一）
+      # apiKeyEnv: PROVIDER_A_KEY # 环境变量名（与 apiKey 二选一）
+      models:
+        - official: deepseek-v4-flash        # 键值1：必须是官方三选一之一
+          relayId: deepseek-v4-flash-0731    # 键值2：真正发给中转站的模型 id（UI 也显示它）
+        - official: deepseek-v4-flash-vision-exp
+          relayId: dsv4fve
+
+    # 例 2：供应商 B —— 一个中转站只服务一个官方模型
+    - provider: deepseek-b
+      baseURL: https://b.example/v1
+      apiKeyEnv: PROVIDER_B_KEY   # 用环境变量名（启动时/每请求经凭据或环境解析）
+      models:
+        - official: deepseek-v4-pro
+          relayId: deepseek-v4-pro-b
+
+    # 例 3：只留 relayId、不转发（= 使用官方模型名）
+    # - provider: deepseek-c
+    #   baseURL: https://c.example/v1
+    #   apiKeyEnv: PROVIDER_C_KEY
+    #   models:
+    #     - official: deepseek-v4-flash
+    #       relayId: deepseek-v4-flash
