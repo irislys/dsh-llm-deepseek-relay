@@ -137,3 +137,9 @@ dsh plugin --profile web remove dsh-llm-deepseek-relay
 - **线协议固定**为 OpenAI 兼容 `/chat/completions`；`baseURL` 可配，**协议不可换成 Anthropic 或厂商私有格式**（如需自定义协议，需另写 `LlmAdapter`，或用 `llm-pi-ai`）。
 - 一个供应商一个适配器实例/一个 `baseURL`；同一模型挂多个供应商 = 多个分组多条路由，**手动切换，无请求级负载均衡/故障转移**。
 - 图片输入默认走 DeepSeek `/files`；中转站若不实现 `/files`，会整单回退 base64 内联（有独立 20 MiB 预算），图片路径与官方可能不完全一致，文字/推理/工具不受影响。
+
+---
+
+## License
+
+[MIT](./LICENSE) © 2026 [irislys](https://github.com/irislys)
