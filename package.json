@@ -1,11 +1,11 @@
 {
   "name": "dsh-llm-deepseek-relay",
-  "version": "0.1.1-rc.5",
+  "version": "0.1.1-rc.6",
   "description": "Register DeepSeekAdapter provider routes to relay suppliers, driven by a thin config file.",
   "type": "module",
   "main": "lib/index.js",
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test test/config-conflicts.test.mjs test/tool-call-sanitizer.test.mjs"
   },
   "license": "MIT",
   "files": [
