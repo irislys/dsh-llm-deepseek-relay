@@ -12,7 +12,8 @@
 # 规则：
 #   - 每个供应商 = 一个 provider 分组（选择器里显示为组名）
 #   - 一个供应商可服务 1~N 个官方模型；每个模型 = official(键值1) → relayId(键值2)
-#   - 全配置合计最多 3 个模型；每个官方模型只能出现一次（跨供应商也算）
+#   - 同一个官方模型可出现在**不同**供应商下（各走各的中转站）；同一供应商内不允许重复
+#   - relayId 在同一供应商内必须唯一（跨供应商允许相同；选择按 provider + model 定位）
 #   - key 二选一：apiKey(硬编码) 或 apiKeyEnv(环境变量名)，绝不能同时填
 # =============================================================================
 relay:
@@ -36,7 +37,22 @@ relay:
         - official: deepseek-v4-pro
           relayId: deepseek-v4-pro-b
 
-    # 例 3：只留 relayId、不转发（= 使用官方模型名）
+    # 例 3：同一官方模型挂两个供应商（切换中转站 = 在 Web 选择器切换供应商分组；
+    #        relayId 跨供应商可相同也可不同，同供应商内必须唯一）
+    # - provider: deepseek-a
+    #   baseURL: https://a.example/v1
+    #   apiKeyEnv: PROVIDER_A_KEY
+    #   models:
+    #     - official: deepseek-v4-flash
+    #       relayId: deepseek-v4-flash-0731
+    # - provider: deepseek-b
+    #   baseURL: https://b.example/v1
+    #   apiKeyEnv: PROVIDER_B_KEY
+    #   models:
+    #     - official: deepseek-v4-flash
+    #       relayId: deepseek-v4-flash-0801
+
+    # 例 4：只留 relayId、不转发（= 使用官方模型名）
     # - provider: deepseek-c
     #   baseURL: https://c.example/v1
     #   apiKeyEnv: PROVIDER_C_KEY
