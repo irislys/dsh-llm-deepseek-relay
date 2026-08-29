@@ -32,12 +32,16 @@ dsh plugin --profile web add ./dsh-llm-deepseek-relay-<ver>.tgz
 装完会把它加入 `dsh.profile.bundles`，并把所依赖的 `@deepseek-ai/dsh-llm-deepseek` 等官方包一起装进 profile。
 
 > 兼容性：依赖按 `0.1.1-rc.2` 固定；需与运行的 dsh 版本一致（dsh `0.1.1-rc.x`）。若 dsh 版本不同，改 `package.json` 里对应依赖版本后重打 tarball。
+>
+> WSL 用户注意：`pnpm pack` 在 Windows 挂载盘（`/mnt/c`、`/mnt/d` 等 DrvFS）上会因 chmod/futime 报 `EPERM`，请在 Linux 原生目录（如 `~/work`）里克隆并打包。
 
 安装后重启 `dsh --profile web`，并在 `$DSH_HOME/deepseek-relay.config.yaml`（见下）填好你的中转站。
 
 ## 配置
 
 把 `deepseek-relay.config.yaml` 复制到 `$DSH_HOME/deepseek-relay.config.yaml`（`$DSH_HOME` 默认 `~/.dsh`，Windows 为 `C:\Users\<你>\.dsh`），按需填写。
+
+> 默认从 `$DSH_HOME/deepseek-relay.config.yaml` 读取；如需换路径（多份配置切换、测试等），可在 profile 的插件配置里设置 `configPath` 选项覆盖。
 
 ```yaml
 relay:
@@ -64,6 +68,7 @@ relay:
 | 字段 | 说明 |
 |---|---|
 | `provider` | 该供应商注册成的路由名（选择器分组名）。不能与 `deepseek-official` 冲突。 |
+| `displayName` | 可选的**分组显示名**（Web 选择器里看到的组名）；不填则显示 `provider`。 |
 | `baseURL` | 中转站根地址；适配器自动拼 `/chat/completions`。 |
 | `apiKey` / `apiKeyEnv` | **二选一**。`apiKey` 直接写 key（硬编码）；`apiKeyEnv` 写环境变量名（经 dsh 凭据服务或启动环境解析）。都填或都不填 → 加载失败。 |
 | `models[].official` | **键值1**：必须是 `deepseek-v4-flash` / `deepseek-v4-pro` / `deepseek-v4-flash-vision-exp` 之一。为空/不存在/不是三选一 → **加载时响亮失败**（指名模型并列出合法 id）。 |
@@ -83,7 +88,7 @@ relay:
 
 ## Web 页切换模型
 
-插件把每个供应商注册成一条路由。Web 模型选择器按**供应商分组**（组名 = `provider`），下列该供应商的模型（显示名 = `relayId`）。同一个官方模型挂在多个供应商下时，会在每个分组各出现一次：**切换中转站 = 切换供应商分组**（选中项以 `provider + model` 定位）。切模型就是"选供应商 + 选模型"下拉。要增改模型，改配置文件后热重载即生效；**供应商拓扑变化（新增/删除供应商）需重启**。
+插件把每个供应商注册成一条路由。Web 模型选择器按**供应商分组**（组名 = `displayName`，未设置时为 `provider`），下列该供应商的模型（显示名 = `relayId`）。同一个官方模型挂在多个供应商下时，会在每个分组各出现一次：**切换中转站 = 切换供应商分组**（选中项以 `provider + model` 定位）。切模型就是"选供应商 + 选模型"下拉。要增改模型，改配置文件后热重载即生效；**供应商拓扑变化（新增/删除供应商）需重启**。热重载读到的配置若校验失败，**保留上一份好配置并记 error 日志**，运行不中断（区别于启动期的响亮失败）。
 
 ## 校验
 
