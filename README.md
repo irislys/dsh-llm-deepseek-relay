@@ -31,7 +31,7 @@ dsh plugin --profile web add ./dsh-llm-deepseek-relay-<ver>.tgz
 
 装完会把它加入 `dsh.profile.bundles`，并把所依赖的 `@deepseek-ai/dsh-llm-deepseek` 等官方包一起装进 profile。
 
-> 兼容性：依赖按 `0.1.1-rc.2` 固定；需与运行的 dsh 版本一致（dsh `0.1.1-rc.x`）。若 dsh 版本不同，改 `package.json` 里对应依赖版本后重打 tarball。
+> 兼容性：依赖按 `0.1.2-alpha.2` 固定；需与运行的 dsh 版本一致（dsh `0.1.2-alpha.x`）。若 dsh 版本不同，改 `package.json` 里对应依赖版本后重打 tarball。
 >
 > WSL 用户注意：`pnpm pack` 在 Windows 挂载盘（`/mnt/c`、`/mnt/d` 等 DrvFS）上会因 chmod/futime 报 `EPERM`，请在 Linux 原生目录（如 `~/work`）里克隆并打包。
 
