@@ -1,6 +1,6 @@
 # dsh-llm-deepseek-relay
 
-把官方 DeepSeek 模型经**中转站/网关**接入 dsh 的插件：复用一个 `DeepSeekAdapter` 实例按供应商注册新路由，让 `deepseek-v4-flash` / `deepseek-v4-pro` / `deepseek-v4-flash-vision-exp`(dsv4fve) 走你自己的中转站，**模型参数与官方 `deepseek-official` 完全一致**，且配置文件只管「中转 + 新增功能」。
+把官方 DeepSeek 模型经**中转站/网关**接入 dsh 的插件：复用一个 `DeepSeekAdapter` 实例按供应商注册新路由，让 `deepseek-v4-flash` / `deepseek-v4-pro` / `deepseek-v4-flash-vision-exp`(dsv4fve) 走你自己的中转站，**模型参数与官方 `deepseek-official` 完全一致**（请求只差 `baseURL`、模型 id=`relayId`、key 三项，其余形态一致），且配置文件只管「中转 + 新增功能」。
 
 > 为什么不用「照抄参数到自定义供应商」：dsv4fve 的 `reasoning_effort` / `reasoning_content` / `thinking` / 图片 pixel·byte 预算 / Files API 这些参数**绑定在官方 DeepSeek 适配器上**，`llm-pi-ai` 这类自定义供应商的 compat 门控给不了、也不能照抄。所以让同一条适配器改 `baseURL` 指向中转站，参数自然与官方一致。
 
@@ -29,6 +29,8 @@ dsh plugin --profile web add "github:irislys/dsh-deepseek-relay-config#main"
 ```
 仓库根目录就是插件包（`package.json` 带 `dsh.bundle`），会直接拉取并装进 profile。
 
+> `#main` 是**滚动分支**：装到的就是当时的 HEAD（跟随 dsh 最新发布验证，见上方适配声明）。要冻结某个历史版本，改用对应 commit 引用或用方式 B 的本地 tarball。
+
 ### 方式 B：本地 tarball（已验证）
 ```sh
 git clone https://github.com/irislys/dsh-deepseek-relay-config
@@ -39,7 +41,7 @@ dsh plugin --profile web add ./dsh-llm-deepseek-relay-<ver>.tgz
 
 装完会把它加入 `dsh.profile.bundles`，并把所依赖的 `@deepseek-ai/dsh-llm-deepseek` 等官方包一起装进 profile。
 
-> 兼容性：依赖按 `0.1.2-alpha.2` 固定；需与运行的 dsh 版本一致（dsh `0.1.2-alpha.x`）。若 dsh 版本不同，改 `package.json` 里对应依赖版本后重打 tarball。
+> 兼容性：依赖按 `0.1.2-alpha.2` 固定，需运行 dsh **`0.1.2-alpha.2`**（alpha 小版本间 API 可能已变化，本项目只以最近发布版验证）。若 dsh 版本不同，改 `package.json` 里对应依赖版本后重打 tarball——**这只是有机会兼容的自助手段，项目不保证可用**。
 >
 > WSL 用户注意：`pnpm pack` 在 Windows 挂载盘（`/mnt/c`、`/mnt/d` 等 DrvFS）上会因 chmod/futime 报 `EPERM`，请在 Linux 原生目录（如 `~/work`）里克隆并打包。
 
@@ -92,7 +94,7 @@ relay:
 
 ### 官方参数为什么不填
 
-`contextWindow` / `maxTokens` / `reasoningEffort` / `thinking` / `imagePixelBudget` / `imageMaxBytes` / 图片 Files-API 预算 / `retryPolicy`……这些**全部由插件内置**官方默认值（`maxTokens 256000`、上下文 `1000000`、省略 `reasoningEffort`=high、`thinking: enabled`、`streamIdleTimeoutMs 300000`、vision 模型 `640000` 像素 / 1 MiB），配置文件**不出现**。
+`contextWindow` / `maxTokens` / `reasoningEffort` / `thinking` / `imagePixelBudget` / `imageMaxBytes` / 图片 Files-API 预算 / `retryPolicy`……这些**全部由插件内置**官方默认值（`maxTokens 256000`、上下文 `1000000`、不填 `reasoningEffort`=官方默认 high、`thinking: enabled`、`streamIdleTimeoutMs 300000`、vision 模型 `640000` 像素 / 1 MiB），配置文件**不出现**。
 
 ## Web 页切换模型
 
