@@ -1,5 +1,5 @@
 # dsh-llm-deepseek-relay bundle patch.
-# The bundle registers a DeepSeekAdapter route per configured relay supplier.
+# The bundle registers a DeepSeekAdapter route per configured relay provider.
 # Configuration lives in $DSH_HOME/deepseek-relay.config.yaml (see README).
 - insert:
     - id: llm-deepseek-relay

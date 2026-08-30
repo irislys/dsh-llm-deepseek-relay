@@ -1,7 +1,7 @@
 {
   "name": "dsh-llm-deepseek-relay",
   "version": "0.1.2-alpha.2",
-  "description": "Register DeepSeekAdapter provider routes to relay suppliers, driven by a thin config file.",
+  "description": "Register DeepSeekAdapter provider routes to relay providers, driven by a thin config file.",
   "type": "module",
   "main": "lib/index.js",
   "scripts": {

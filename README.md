@@ -25,7 +25,7 @@
 
 ### 方式 A：GitHub git 源（推荐）
 ```sh
-dsh plugin --profile web add "github:irislys/dsh-deepseek-relay-config#main"
+dsh plugin --profile web add "github:irislys/dsh-llm-deepseek-relay#main"
 ```
 仓库根目录就是插件包（`package.json` 带 `dsh.bundle`），会直接拉取并装进 profile。
 
@@ -33,8 +33,8 @@ dsh plugin --profile web add "github:irislys/dsh-deepseek-relay-config#main"
 
 ### 方式 B：本地 tarball（已验证）
 ```sh
-git clone https://github.com/irislys/dsh-deepseek-relay-config
-cd dsh-deepseek-relay-config
+git clone https://github.com/irislys/dsh-llm-deepseek-relay
+cd dsh-llm-deepseek-relay
 pnpm pack
 dsh plugin --profile web add ./dsh-llm-deepseek-relay-<ver>.tgz
 ```
@@ -61,8 +61,8 @@ relay:
       apiKey: sk-a-xxxxxxxx      # 硬编码 key（与 apiKeyEnv 二选一）
       # apiKeyEnv: PROVIDER_A_KEY
       models:
-        - official: deepseek-v4-flash          # 键值1：必须是官方三选一之一
-          relayId: deepseek-v4-flash-0731       # 键值2：真正发给中转站的模型 id（UI 也显示它）
+        - official: deepseek-v4-flash          # official：必须是官方三选一之一
+          relayId: deepseek-v4-flash-0731       # relayId：真正发给中转站的模型 id（UI 也显示它）
         - official: deepseek-v4-flash-vision-exp
           relayId: dsv4fve
     - provider: deepseek-b
@@ -73,6 +73,15 @@ relay:
           relayId: deepseek-v4-pro-b
 ```
 
+### 术语
+
+| 称呼 | 含义 |
+|---|---|
+| **供应商（provider）** | 配置里的一个分组：一条 `baseURL` + 一个 key + 一组模型；注册成 dsh 的一条 provider 路由。`provider` 字段的值就是它的名字。 |
+| **中转站** | 供应商指向的上游服务（`baseURL` 的归属方）。每个供应商恰好对应一个中转站。 |
+| **官方模型（`official`）** | `official` 字段的值：官方三选一模型 id。 |
+| **转发 id（`relayId`）** | `relayId` 字段的值：真正发给中转站的模型 id（缺省 = `official`）。 |
+
 ### 字段说明
 
 | 字段 | 说明 |
@@ -81,8 +90,8 @@ relay:
 | `displayName` | 可选的**分组显示名**（Web 选择器里看到的组名）；不填则显示 `provider`。 |
 | `baseURL` | 中转站根地址；适配器自动拼 `/chat/completions`。 |
 | `apiKey` / `apiKeyEnv` | **二选一**。`apiKey` 直接写 key（硬编码）；`apiKeyEnv` 写环境变量名（经 dsh 凭据服务或启动环境解析）。都填或都不填 → 加载失败。 |
-| `models[].official` | **键值1**：必须是 `deepseek-v4-flash` / `deepseek-v4-pro` / `deepseek-v4-flash-vision-exp` 之一。为空/不存在/不是三选一 → **加载时响亮失败**（指名模型并列出合法 id）。 |
-| `models[].relayId` | **键值2**：真正发给中转站的模型 id，自由填写；留空则用 `official`。**Web 选择器显示的也是它**（同一供应商内需唯一）。 |
+| `models[].official` | **官方模型 id**：必须是 `deepseek-v4-flash` / `deepseek-v4-pro` / `deepseek-v4-flash-vision-exp` 之一。为空/不存在/不是三选一 → **加载时响亮失败**（指名模型并列出合法 id）。 |
+| `models[].relayId` | **转发 id**：真正发给中转站的模型 id，自由填写；留空则用 `official`。**Web 选择器显示的也是它**（同一供应商内需唯一）。 |
 
 ### 规则（全部在加载时校验，违规即响亮失败）
 
