@@ -53,7 +53,7 @@ relay:
     #     - official: deepseek-v4-flash
     #       relayId: deepseek-v4-flash-0801
 
-    # 例 4：只留 relayId、不转发（= 使用官方模型名）
+    # 例 4：relayId 填官方名 = 不转发（效果等同省略 relayId）
     # - provider: deepseek-c
     #   baseURL: https://c.example/v1
     #   apiKeyEnv: PROVIDER_C_KEY
